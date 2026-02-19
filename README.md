@@ -65,6 +65,9 @@ A estrutura geral do UniCoS segue este modelo:
                  |                ┌───────────────┐
                  └────────────────│  MS-Compras   │
                  |                └───────────────┘
+                 |                ┌──────────────────┐
+                 └────────────────│  MS-Pagamentos   │
+                 |                └──────────────────┘
     ┌────────────────────────┐
     │        CORE (DDD)      │
     │  Publicado no GitHub   │
@@ -98,6 +101,7 @@ A estrutura geral do UniCoS segue este modelo:
 | **ms-estoque** | Microserviço responsável pela gestão de estoques, responsáveis e vínculos operacionais com filiais. |
 | **ms-vendas** | Microserviço responsável pela gestão de vendas, pedidos e operações comerciais da plataforma. |
 | **ms-compras** | Microserviço responsável pela gestão de compras, pedidos de aquisição e operações comerciais de suprimentos. |
+| **ms-pagamentos** | Microserviço responsável por autorizar, recusar e estornar pagamentos, com simulação de adquirente (PIX/cartão/boleto). |
 | **unicos-core** | Módulo principal de domínios e componentes centrais do ecossistema UniCoS (Unique Control System). |
 
 ---
@@ -160,6 +164,7 @@ backend/
 ├── ms-estoque/
 ├── ms-vendas/
 ├── ms-compras/
+├── ms-pagamentos/
 ```
 
 ---
@@ -251,6 +256,46 @@ mvn spring-boot:run
 cd ms-compras
 mvn spring-boot:run
 ```
+```bash
+cd ms-pagamentos
+mvn spring-boot:run
+```
+
+---
+
+## 💳 Exemplo de processamento real (ms-pagamentos)
+
+Fluxo sugerido via Gateway (`http://localhost:8765/ms-pagamentos`):
+
+1. Criar um pagamento:
+```bash
+curl -X POST http://localhost:8765/ms-pagamentos/pagamentos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referenciaPedido": "PED-2026-0001",
+    "valor": 249.90,
+    "moeda": "BRL",
+    "metodo": "CARTAO_CREDITO",
+    "numeroCartao": "4111111111111111"
+  }'
+```
+
+2. Processar o pagamento (substitua `{id}` pelo retorno da criação):
+```bash
+curl -X POST http://localhost:8765/ms-pagamentos/pagamentos/{id}/processar
+```
+
+3. Consultar status aprovado/recusado:
+```bash
+curl http://localhost:8765/ms-pagamentos/pagamentos/{id}
+```
+
+4. Estornar pagamento aprovado:
+```bash
+curl -X POST http://localhost:8765/ms-pagamentos/pagamentos/{id}/estornar
+```
+
+A simulação valida regra de cartão (algoritmo de Luhn), exige chave para PIX e aplica política antifraude para valores altos, retornando código de autorização e NSU quando aprovado.
 
 ---
 
