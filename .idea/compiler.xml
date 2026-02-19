@@ -23,7 +23,7 @@
         <module name="core-tenant" />
         <module name="core-auth" />
       </profile>
-      <profile name="Annotation profile for UNICOS :: MS-Compras" enabled="true">
+      <profile name="Annotation profile for UNICOS :: MS-Pagamentos" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -35,8 +35,8 @@
         <module name="ms-empresa" />
         <module name="ms-estoque" />
         <module name="ms-pessoas" />
-        <module name="ms-compras" />
         <module name="config-server" />
+        <module name="ms-compras" />
         <module name="ms-permissao" />
         <module name="ms-produto" />
         <module name="ms-departamento" />
@@ -58,6 +58,7 @@
       <module name="core-security-contract" target="21" />
       <module name="core-tesouraria" target="21" />
       <module name="ms-auth" target="21" />
+      <module name="ms-pagamentos" target="21" />
       <module name="ms-produtos" target="21" />
     </bytecodeTargetLevel>
   </component>
@@ -73,6 +74,7 @@
       <module name="ms-estoque" options="-parameters" />
       <module name="ms-filial" options="-parameters" />
       <module name="ms-notificacao" options="-parameters" />
+      <module name="ms-pagamentos" options="-parameters" />
       <module name="ms-permissao" options="-parameters" />
       <module name="ms-pessoas" options="-parameters" />
       <module name="ms-produto" options="-parameters" />
