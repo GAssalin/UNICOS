@@ -134,12 +134,24 @@ public class GatewayConfig {
                 // ROTA: MS-COMPRAS (COM JWT)
                 // ===============================
                 .route("ms-compras", r -> r
-                        .path("/ms-comnpras/**")
+                        .path("/ms-compras/**")
                         .filters(f -> f
                                 .stripPrefix(1)
                                 .filter(jwtAuthFilter)
                         )
                         .uri("lb://ms-compras")
+                )
+
+                // ===============================
+                // ROTA: MS-PAGAMENTOS (COM JWT)
+                // ===============================
+                .route("ms-pagamentos", r -> r
+                        .path("/ms-pagamentos/**")
+                        .filters(f -> f
+                                .stripPrefix(1)
+                                .filter(jwtAuthFilter)
+                        )
+                        .uri("lb://ms-pagamentos")
                 )
 
                 .build();

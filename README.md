@@ -98,6 +98,7 @@ A estrutura geral do UniCoS segue este modelo:
 | **ms-estoque** | Microserviço responsável pela gestão de estoques, responsáveis e vínculos operacionais com filiais. |
 | **ms-vendas** | Microserviço responsável pela gestão de vendas, pedidos e operações comerciais da plataforma. |
 | **ms-compras** | Microserviço responsável pela gestão de compras, pedidos de aquisição e operações comerciais de suprimentos. |
+| **ms-pagamentos** | Microserviço responsável pela gestão de pagamentos, liquidações e acompanhamento de transações financeiras da plataforma. |
 | **unicos-core** | Módulo principal de domínios e componentes centrais do ecossistema UniCoS (Unique Control System). |
 
 ---
@@ -160,6 +161,7 @@ backend/
 ├── ms-estoque/
 ├── ms-vendas/
 ├── ms-compras/
+├── ms-pagamentos/
 ```
 
 ---
@@ -249,6 +251,10 @@ mvn spring-boot:run
 ```
 ```bash
 cd ms-compras
+mvn spring-boot:run
+```
+```bash
+cd ms-pagamentos
 mvn spring-boot:run
 ```
 
