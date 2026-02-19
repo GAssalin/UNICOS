@@ -4,40 +4,45 @@ import br.com.unicos.ms_pagamentos.dto.PagamentoCreateRequest;
 import br.com.unicos.ms_pagamentos.dto.PagamentoResponse;
 import br.com.unicos.ms_pagamentos.model.Pagamento;
 import br.com.unicos.ms_pagamentos.model.StatusPagamento;
-import br.com.unicos.ms_pagamentos.repository.PagamentoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class PagamentoService {
 
     private final SimuladorGatewayPagamento gatewayPagamento;
-    private final PagamentoRepository pagamentoRepository;
+    private final ConcurrentHashMap<UUID, Pagamento> pagamentos = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, PagamentoCreateRequest> requisicoes = new ConcurrentHashMap<>();
 
-    @Transactional
     public PagamentoResponse criar(PagamentoCreateRequest request) {
+        UUID id = UUID.randomUUID();
+        OffsetDateTime agora = OffsetDateTime.now();
+
         Pagamento pagamento = Pagamento.builder()
+                .id(id)
                 .referenciaPedido(request.getReferenciaPedido())
                 .valor(request.getValor())
                 .moeda(request.getMoeda())
                 .metodo(request.getMetodo())
-                .numeroCartao(request.getNumeroCartao())
-                .chavePix(request.getChavePix())
                 .status(StatusPagamento.CRIADO)
+                .criadoEm(agora)
+                .atualizadoEm(agora)
                 .build();
 
-        Pagamento salvo = pagamentoRepository.save(pagamento);
-        return toResponse(salvo);
+        pagamentos.put(id, pagamento);
+        requisicoes.put(id, request);
+
+        return toResponse(pagamento);
     }
 
-    @Transactional
     public PagamentoResponse processar(UUID pagamentoId) {
         Pagamento pagamento = getPagamento(pagamentoId);
 
@@ -51,8 +56,9 @@ public class PagamentoService {
         }
 
         pagamento.setStatus(StatusPagamento.PROCESSANDO);
+        pagamento.setAtualizadoEm(OffsetDateTime.now());
 
-        ProcessamentoGatewayResponse retorno = gatewayPagamento.processar(toGatewayRequest(pagamento));
+        ProcessamentoGatewayResponse retorno = gatewayPagamento.processar(requisicoes.get(pagamentoId));
 
         if (retorno.isAprovado()) {
             pagamento.setStatus(StatusPagamento.APROVADO);
@@ -64,10 +70,10 @@ public class PagamentoService {
             pagamento.setDescricaoRecusa(retorno.getDescricao());
         }
 
-        return toResponse(pagamentoRepository.save(pagamento));
+        pagamento.setAtualizadoEm(OffsetDateTime.now());
+        return toResponse(pagamento);
     }
 
-    @Transactional
     public PagamentoResponse estornar(UUID pagamentoId) {
         Pagamento pagamento = getPagamento(pagamentoId);
 
@@ -77,35 +83,26 @@ public class PagamentoService {
         }
 
         pagamento.setStatus(StatusPagamento.ESTORNADO);
-        return toResponse(pagamentoRepository.save(pagamento));
+        pagamento.setAtualizadoEm(OffsetDateTime.now());
+        return toResponse(pagamento);
     }
 
-    @Transactional(readOnly = true)
     public PagamentoResponse buscarPorId(UUID id) {
         return toResponse(getPagamento(id));
     }
 
-    @Transactional(readOnly = true)
     public List<PagamentoResponse> listar() {
-        return pagamentoRepository.findAll().stream()
+        return pagamentos.values().stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     private Pagamento getPagamento(UUID id) {
-        return pagamentoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado."));
-    }
-
-    private PagamentoCreateRequest toGatewayRequest(Pagamento pagamento) {
-        PagamentoCreateRequest request = new PagamentoCreateRequest();
-        request.setReferenciaPedido(pagamento.getReferenciaPedido());
-        request.setValor(pagamento.getValor());
-        request.setMoeda(pagamento.getMoeda());
-        request.setMetodo(pagamento.getMetodo());
-        request.setNumeroCartao(pagamento.getNumeroCartao());
-        request.setChavePix(pagamento.getChavePix());
-        return request;
+        Pagamento pagamento = pagamentos.get(id);
+        if (pagamento == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado.");
+        }
+        return pagamento;
     }
 
     private PagamentoResponse toResponse(Pagamento pagamento) {
