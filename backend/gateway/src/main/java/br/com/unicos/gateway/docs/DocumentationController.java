@@ -24,6 +24,7 @@ public class DocumentationController {
         String estoqueUrl = resolveServiceUrl("ms-estoque");
         String vendasUrl = resolveServiceUrl("ms-vendas");
         String comprasUrl = resolveServiceUrl("ms-compras");
+        String pagamentosUrl = resolveServiceUrl("ms-pagamentos");
 
         return """
                 <html>
@@ -111,6 +112,12 @@ public class DocumentationController {
                       <a href="%s/v3/api-docs" target="_blank">OpenAPI JSON</a>
                     </div>
 
+                    <div class="card">
+                      <strong>MS-PAGAMENTOS</strong><br/>
+                      <a href="%s/swagger-ui/index.html" target="_blank">Swagger UI</a><br/>
+                      <a href="%s/v3/api-docs" target="_blank">OpenAPI JSON</a>
+                    </div>
+
                   </body>
                 </html>
                 """.formatted(
@@ -123,7 +130,8 @@ public class DocumentationController {
                         departamentoUrl, departamentoUrl,
                         estoqueUrl, estoqueUrl,
                         vendasUrl, vendasUrl,
-                        comprasUrl, comprasUrl);
+                        comprasUrl, comprasUrl,
+                        pagamentosUrl, pagamentosUrl);
     }
 
     private String resolveServiceUrl(String serviceId) {
