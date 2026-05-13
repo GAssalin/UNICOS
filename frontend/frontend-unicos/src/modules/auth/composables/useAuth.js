@@ -25,19 +25,25 @@ export async function login(email, senha) {
     throw new Error('Preencha e-mail e senha.')
   }
 
-  const auth = await authenticate({ email: normalizedEmail, senha: normalizedPassword })
+  try {
+    const auth = await authenticate({ email: normalizedEmail, senha: normalizedPassword })
 
-  console.log(auth);
+    if (!auth.raw.accessToken) {
+      throw new Error('Login realizado, mas o backend não retornou o token. Verifique o campo no response.')
+    }
 
-  if (!auth.raw.tokenAccess) {
-    throw new Error('Login realizado, mas o backend não retornou o token. Verifique o campo token/tokenAccess/accessToken no response.')
+    localStorage.setItem(AUTH_KEY, 'true')
+    localStorage.setItem(TOKEN_KEY, auth.raw.accessToken)
+    localStorage.setItem(USER_KEY, JSON.stringify(auth.user || { email: normalizedEmail }))
+
+    return auth
+  } catch(error) {
+    if (error.message) {
+      throw new Error(error.message)
+    }
+
+    throw new Error('Serviço de autenticação temporariamente indisponível')
   }
-
-  localStorage.setItem(AUTH_KEY, 'true')
-  localStorage.setItem(TOKEN_KEY, auth.raw.tokenAccess)
-  localStorage.setItem(USER_KEY, JSON.stringify(auth.user || { email: normalizedEmail }))
-
-  return auth
 }
 
 export function logout() {

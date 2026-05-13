@@ -70,6 +70,10 @@ public class AutenticacaoService {
     }
 
     private DadosToken fallbackLogin(DadosLogin dados, Throwable ex) {
+        if (ex instanceof ResponseStatusException responseException) {
+            throw responseException;
+        }
+
         log.error(
                 "Fallback do CircuitBreaker acionado no login para o email [{}]. Causa: {}",
                 dados.email(),

@@ -40,9 +40,22 @@ export async function apiRequest(path, options = {}) {
   const data = await parseResponse(response)
 
   if (response.status === 401) {
-    clearSession()
-    window.location.href = '/login'
-    throw new Error('Sessão expirada. Faça login novamente.')
+    const message =
+      data?.detail ||
+      data?.message ||
+      data?.mensagem ||
+      data?.error ||
+      'Usuário ou senha inválidos'
+
+    const isLoginRequest = path.includes('/autenticacao/login')
+
+    if (!isLoginRequest) {
+      clearSession()
+      window.location.href = '/login'
+      throw new Error('Sessão expirada. Faça login novamente.')
+    }
+
+    throw new Error(message)
   }
 
   if (!response.ok) {
