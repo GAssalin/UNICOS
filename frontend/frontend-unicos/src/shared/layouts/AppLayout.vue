@@ -36,7 +36,7 @@
       <div class="main">
         <header class="topbar">
           <div>
-            <p class="topbar-label">Painel UniCoS</p>
+            <p class="topbar-label">{{ companyName }}</p>
             <strong>{{ pageTitle }}</strong>
           </div>
 
@@ -58,16 +58,18 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { getCurrentUser, logout } from '@/modules/auth/composables/useAuth'
 import { MENU_ITEMS } from '@/core/config/menu'
+import { getCompanyById, resolveCompanyId, resolveCompanyName } from '@/modules/empresa/services/companyService'
 
 const route = useRoute()
 const router = useRouter()
 const logoUrl = '/assets/logo-outline.png'
 const showLogo = ref(true)
 const currentUser = getCurrentUser() || {}
+const companyName = ref(resolveCompanyName(currentUser) || 'Painel UniCoS')
 
 const menuItems = MENU_ITEMS
 
@@ -76,6 +78,19 @@ const userName = computed(() => currentUser.nome || currentUser.name || currentU
 const userInitial = computed(() => userName.value.charAt(0).toUpperCase())
 
 const pageTitle = computed(() => route.meta.title || route.name || 'Dashboard')
+
+onMounted(async () => {
+  const companyId = resolveCompanyId(currentUser)
+
+  if (!companyId || resolveCompanyName(currentUser)) return
+
+  try {
+    const company = await getCompanyById(companyId)
+    companyName.value = company?.nomeFantasia || company?.razaoSocial || company?.nome || 'Painel UniCoS'
+  } catch {
+    companyName.value = 'Painel UniCoS'
+  }
+})
 
 function handleLogout() {
   logout()
