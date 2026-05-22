@@ -14,6 +14,7 @@ export function clearSession() {
   localStorage.removeItem('unicos_auth')
   localStorage.removeItem('unicos_access_token')
   localStorage.removeItem('unicos_user')
+  localStorage.removeItem('unicos_permissions')
 }
 
 async function parseResponse(response) {

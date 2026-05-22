@@ -1,5 +1,7 @@
 import { authenticate } from '@/modules/auth/services/authService'
 import { clearSession } from '@/core/services/api'
+import { fetchUserPermissions } from '@/modules/auth/services/permissionService'
+import { setCurrentPermissions } from '@/modules/auth/composables/usePermissions'
 
 const AUTH_KEY = 'unicos_auth'
 const TOKEN_KEY = 'unicos_access_token'
@@ -36,7 +38,10 @@ export async function login(email, senha) {
     localStorage.setItem(TOKEN_KEY, auth.raw.accessToken)
     localStorage.setItem(USER_KEY, JSON.stringify(auth.user || { email: normalizedEmail }))
 
-    return auth
+    const permissions = await fetchUserPermissions()
+    setCurrentPermissions(permissions)
+
+    return { ...auth, permissions }
   } catch(error) {
     if (error.message) {
       throw new Error(error.message)

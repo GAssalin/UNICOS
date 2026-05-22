@@ -35,7 +35,7 @@
 
     <div class="grid-main lower-grid">
       <div class="panel panel-list">
-        <div class="panel-header"><h3>Produtos com estoque baixo</h3><RouterLink to="/estoque">Ver estoque</RouterLink></div>
+        <div class="panel-header"><h3>Produtos com estoque baixo</h3><RouterLink v-if="canViewStock" to="/estoque">Ver estoque</RouterLink></div>
         <ul v-if="lowStockProducts.length" class="stock-list">
           <li v-for="product in lowStockProducts" :key="product.id"><span>{{ product.nome }}</span><strong>{{ product.saldo }} {{ product.unidade }}</strong></li>
         </ul>
@@ -43,7 +43,7 @@
       </div>
 
       <div class="panel panel-table">
-        <div class="panel-header"><h3>Últimas movimentações</h3><RouterLink to="/movimentacoes">Ver todas</RouterLink></div>
+        <div class="panel-header"><h3>Últimas movimentações</h3><RouterLink v-if="canViewMovements" to="/movimentacoes">Ver todas</RouterLink></div>
         <table>
           <thead><tr><th>Data</th><th>Tipo</th><th>Produto</th><th>Qtd.</th></tr></thead>
           <tbody><tr v-for="movement in recentMovements" :key="movement.id"><td>{{ formatDate(movement.data) }}</td><td><span :class="['tag', movement.tipo === 'entrada' ? 'tag-in' : 'tag-out']">{{ movement.tipo }}</span></td><td>{{ movement.produto }}</td><td>{{ movement.quantidade }}</td></tr></tbody>
@@ -58,8 +58,11 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import InfoCard from '@/modules/dashboard/components/InfoCard.vue'
 import { useInventory } from '@/modules/estoque/composables/useInventory'
+import { hasPermission } from '@/modules/auth/composables/usePermissions'
 
 const { productsWithStock, movementsDetailed } = useInventory()
+const canViewStock = computed(() => hasPermission('ESTOQUE_VISUALIZAR'))
+const canViewMovements = computed(() => hasPermission('MOVIMENTACOES_VISUALIZAR'))
 const totalStock = computed(() => productsWithStock.value.reduce((sum, product) => sum + product.saldo, 0))
 const totalStockValue = computed(() => productsWithStock.value.reduce((sum, product) => sum + product.valorEstoque, 0))
 const totalEntries = computed(() => movementsDetailed.value.filter((m) => m.tipo === 'entrada').reduce((sum, m) => sum + m.quantidade, 0))

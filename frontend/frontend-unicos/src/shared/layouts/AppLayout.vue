@@ -63,6 +63,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { getCurrentUser, logout } from '@/modules/auth/composables/useAuth'
 import { MENU_ITEMS } from '@/core/config/menu'
 import { getCompanyById, resolveCompanyId, resolveCompanyName } from '@/modules/empresa/services/companyService'
+import { hasPermission } from '@/modules/auth/composables/usePermissions'
 
 const route = useRoute()
 const router = useRouter()
@@ -71,7 +72,7 @@ const showLogo = ref(true)
 const currentUser = getCurrentUser() || {}
 const companyName = ref(resolveCompanyName(currentUser) || 'Painel UniCoS')
 
-const menuItems = MENU_ITEMS
+const menuItems = computed(() => MENU_ITEMS.filter((item) => hasPermission(item.permission)))
 
 const userEmail = computed(() => currentUser.email || currentUser.login || 'usuário logado')
 const userName = computed(() => currentUser.nome || currentUser.name || currentUser.username || 'Administrador')
