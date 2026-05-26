@@ -21,6 +21,12 @@ const routes = [
         meta: { title: 'Dashboard' }
       },
       {
+        path: 'empresa',
+        name: 'empresa',
+        component: () => import('@/modules/empresa/pages/CompanyPage.vue'),
+        meta: { title: 'Dados da empresa', permission: 'EMPRESA_LISTAR' }
+      },
+      {
         path: 'estoque',
         name: 'estoque',
         component: () => import('@/modules/estoque/pages/StockPage.vue'),
