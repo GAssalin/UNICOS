@@ -73,16 +73,51 @@ function normalizeNumber(value) {
   return Number(String(value ?? 0).replace(',', '.')) || 0
 }
 
+function getStockStatus(saldo) {
+  if (saldo < 10) {
+    return {
+      label: 'Estoque crítico',
+      description: 'Quantidade abaixo do nível mínimo operacional.',
+      className: 'critical'
+    }
+  }
+
+  if (saldo < 20) {
+    return {
+      label: 'Estoque adequado',
+      description: 'Quantidade dentro do nível operacional esperado.',
+      className: 'adequate'
+    }
+  }
+
+  if (saldo > 30) {
+    return {
+      label: 'Estoque excedente',
+      description: 'Quantidade acima da necessidade operacional.',
+      className: 'surplus'
+    }
+  }
+
+  return {
+    label: 'Estoque regular',
+    description: 'Quantidade estável para operação.',
+    className: 'regular'
+  }
+}
+
 const productsWithStock = computed(() => products.value.map((product) => {
   const saldo = movements.value
     .filter((movement) => movement.produtoId === product.id)
     .reduce((total, movement) => total + (movement.tipo === 'entrada' ? movement.quantidade : -movement.quantidade), 0)
 
+  const stockStatus = getStockStatus(saldo)
+
   return {
     ...product,
     saldo,
     valorEstoque: saldo * normalizeNumber(product.precoCusto),
-    estoqueBaixo: saldo <= normalizeNumber(product.estoqueMinimo)
+    estoqueBaixo: saldo < 10,
+    stockStatus
   }
 }))
 
@@ -180,6 +215,7 @@ export function useInventory() {
     updateProduct,
     deleteProduct,
     addMovement,
-    deleteMovement
+    deleteMovement,
+    getStockStatus
   }
 }

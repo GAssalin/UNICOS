@@ -4,7 +4,6 @@ import br.com.unicos.ms_produto.dto.produto.ProdutoCreateRequest;
 import br.com.unicos.ms_produto.dto.produto.ProdutoResponse;
 import br.com.unicos.ms_produto.dto.produto.ProdutoResumoResponse;
 import br.com.unicos.ms_produto.dto.produto.ProdutoUpdateRequest;
-import br.com.unicos.ms_produto.model.CategoriaProduto;
 import br.com.unicos.ms_produto.model.Produto;
 import br.com.unicos.ms_produto.model.UnidadeMedida;
 import br.com.unicos.ms_produto.repository.UnidadeMedidaRepository;
@@ -64,7 +63,7 @@ public class ProdutoMapper {
         entity.setVolume(request.volume());
     }
 
-    public ProdutoResponse toResponse(Produto entity, Long empresaId, CategoriaProduto categoriaProduto) {
+    public ProdutoResponse toResponse(Produto entity, Long empresaId) {
         if (entity == null)
             return null;
 
@@ -79,16 +78,14 @@ public class ProdutoMapper {
                 entity.getNome(),
                 entity.getDescricao(),
                 entity.getTipoProduto(),
-
-                categoriaProduto.getId(),
-                categoriaProduto.getNome(),
-
+                unidadeMedidaId,
+                entity.getCategoriaId(),
+                entity.getMarcaId(),
                 entity.getCodigoBarras(),
                 entity.getPrecoBase(),
                 entity.getPeso(),
                 entity.getVolume(),
                 entity.getAtivo(),
-
                 entity.getCriadoPor(),
                 entity.getCriadoEm(),
                 entity.getAtualizadoPor(),

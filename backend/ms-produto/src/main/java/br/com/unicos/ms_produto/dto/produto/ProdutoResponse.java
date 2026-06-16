@@ -15,16 +15,14 @@ public record ProdutoResponse(
         String nome,
         String descricao,
         TipoProduto tipoProduto,
-
+        Long unidadeMedidaId,
         Long categoriaId,
-        String categoriaNome,
-
+        Long marcaId,
         String codigoBarras,
         BigDecimal precoBase,
         BigDecimal peso,
         BigDecimal volume,
         Boolean ativo,
-
         Long criadoPor,
         LocalDateTime criadoEm,
         Long atualizadoPor,

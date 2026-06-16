@@ -19,15 +19,24 @@
 
           <hr class="menu-divider" />
 
-          <RouterLink
-            v-for="item in menuItems"
-            :key="item.to"
-            :to="item.to"
-            class="menu-item"
-            active-class="menu-item-active"
-          >
-            {{ item.label }}
-          </RouterLink>
+          <template v-for="item in menuItems" :key="item.label">
+            <RouterLink
+              v-if="!item.disabled"
+              :to="item.to"
+              class="menu-item"
+              active-class="menu-item-active"
+            >
+              {{ item.label }}
+            </RouterLink>
+
+            <span
+              v-else
+              class="menu-item menu-item-disabled"
+              :aria-label="`${item.label} indisponível`"
+            >
+              {{ item.label }}
+            </span>
+          </template>
         </nav>
 
         <button class="sidebar-logout" @click="handleLogout">Sair do sistema</button>
@@ -41,10 +50,10 @@
           </div>
 
           <div class="topbar-user">
-            <div class="user-avatar">{{ userInitial }}</div>
+            <div class="user-avatar">A</div>
             <div>
-              <strong>{{ userName }}</strong>
-              <p>{{ userEmail }}</p>
+              <strong>Administrador</strong>
+              <p>admin</p>
             </div>
           </div>
         </header>
@@ -60,31 +69,27 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { getCurrentUser, logout } from '../composables/useAuth'
+import { logout } from '../composables/useAuth'
 
 const route = useRoute()
 const router = useRouter()
 const logoUrl = '/assets/logo-outline.png'
 const showLogo = ref(true)
-const currentUser = getCurrentUser() || {}
 
 const menuItems = [
+  { label: 'Clientes', to: '/clientes' },
   { label: 'Compras', to: '/compras' },
   { label: 'Estoque', to: '/estoque' },
-  { label: 'Logística', to: '/logistica' },
+  { label: 'Fornecedores', to: '/fornecedores' },
+  { label: 'Logística', disabled: true },
   { label: 'Movimentações', to: '/movimentacoes' },
-  { label: 'Produção', to: '/producao' },
+  { label: 'Produção', disabled: true },
   { label: 'Produtos', to: '/produtos' },
-  { label: 'Qualidade', to: '/qualidade' },
-  { label: 'RH', to: '/rh' },
-  { label: 'TI', to: '/ti' },
+  { label: 'Qualidade', disabled: true },
+  { label: 'RH', disabled: true },
+  { label: 'TI', disabled: true },
   { label: 'Vendas', to: '/vendas' }
 ].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
-
-
-const userEmail = computed(() => currentUser.email || currentUser.login || 'usuário logado')
-const userName = computed(() => currentUser.nome || currentUser.name || currentUser.username || 'Administrador')
-const userInitial = computed(() => userName.value.charAt(0).toUpperCase())
 
 const pageTitle = computed(() => route.meta.title || route.name || 'Dashboard')
 
@@ -170,6 +175,21 @@ function handleLogout() {
 .dashboard-item {
   background: rgba(54, 116, 255, 0.22);
 }
+
+.menu-item-disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  display: block;
+  color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.menu-item-disabled:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: transparent;
+  box-shadow: none;
+}
+
 
 .sidebar-logout {
   margin-top: auto;

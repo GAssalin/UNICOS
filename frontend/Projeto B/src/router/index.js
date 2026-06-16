@@ -7,6 +7,7 @@ import ModulePage from '../pages/ModulePage.vue'
 import ProductsPage from '../pages/ProductsPage.vue'
 import StockPage from '../pages/StockPage.vue'
 import MovementsPage from '../pages/MovementsPage.vue'
+import PartnerPage from '../pages/PartnerPage.vue'
 
 const routes = [
   {
@@ -27,6 +28,13 @@ const routes = [
         meta: { title: 'Dashboard' }
       },
       {
+        path: 'clientes',
+        name: 'clientes',
+        component: PartnerPage,
+        props: { type: 'clients' },
+        meta: { title: 'Clientes' }
+      },
+      {
         path: 'compras',
         name: 'compras',
         component: ModulePage,
@@ -40,11 +48,11 @@ const routes = [
         meta: { title: 'Estoque' }
       },
       {
-        path: 'logistica',
-        name: 'logistica',
-        component: ModulePage,
-        props: { title: 'Logística' },
-        meta: { title: 'Logística' }
+        path: 'fornecedores',
+        name: 'fornecedores',
+        component: PartnerPage,
+        props: { type: 'suppliers' },
+        meta: { title: 'Fornecedores' }
       },
       {
         path: 'movimentacoes',
@@ -57,34 +65,6 @@ const routes = [
         name: 'produtos',
         component: ProductsPage,
         meta: { title: 'Produtos' }
-      },
-      {
-        path: 'producao',
-        name: 'producao',
-        component: ModulePage,
-        props: { title: 'Produção' },
-        meta: { title: 'Produção' }
-      },
-      {
-        path: 'qualidade',
-        name: 'qualidade',
-        component: ModulePage,
-        props: { title: 'Qualidade' },
-        meta: { title: 'Qualidade' }
-      },
-      {
-        path: 'rh',
-        name: 'rh',
-        component: ModulePage,
-        props: { title: 'RH' },
-        meta: { title: 'RH' }
-      },
-      {
-        path: 'ti',
-        name: 'ti',
-        component: ModulePage,
-        props: { title: 'TI' },
-        meta: { title: 'TI' }
       },
       {
         path: 'vendas',

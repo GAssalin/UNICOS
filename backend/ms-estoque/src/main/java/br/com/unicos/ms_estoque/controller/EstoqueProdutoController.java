@@ -19,7 +19,7 @@ import java.math.BigDecimal;
  * Controller responsável pelos endpoints de gerenciamento de saldo de produtos em estoque.
  */
 @RestController
-@RequestMapping("/v1/estoques-produtos")
+@RequestMapping("/api/estoques-produtos")
 @RequiredArgsConstructor
 public class EstoqueProdutoController {
 
