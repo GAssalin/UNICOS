@@ -3,7 +3,8 @@ import { apiRequest } from './api'
 const LOGIN_PATH = import.meta.env.VITE_AUTH_LOGIN_PATH || '/ms-autenticacao/v1/autenticacao/login'
 
 function findToken(response) {
-  return response?.token
+    return response?.tokenAccess
+    || response?.token
     || response?.accessToken
     || response?.access_token
     || response?.jwt

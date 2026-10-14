@@ -7,6 +7,10 @@ import ModulePage from '../pages/ModulePage.vue'
 import ProductsPage from '../pages/ProductsPage.vue'
 import StockPage from '../pages/StockPage.vue'
 import MovementsPage from '../pages/MovementsPage.vue'
+import PartnerPage from '../pages/PartnerPage.vue'
+import HRPage from '../pages/HRPage.vue'
+import SalesPage from '../pages/SalesPage.vue'
+import PurchasesPage from '../pages/PurchasesPage.vue'
 
 const routes = [
   {
@@ -27,10 +31,16 @@ const routes = [
         meta: { title: 'Dashboard' }
       },
       {
+        path: 'clientes',
+        name: 'clientes',
+        component: PartnerPage,
+        props: { type: 'clients' },
+        meta: { title: 'Clientes' }
+      },
+      {
         path: 'compras',
         name: 'compras',
-        component: ModulePage,
-        props: { title: 'Compras' },
+        component: PurchasesPage,
         meta: { title: 'Compras' }
       },
       {
@@ -40,12 +50,19 @@ const routes = [
         meta: { title: 'Estoque' }
       },
       {
-        path: 'logistica',
-        name: 'logistica',
-        component: ModulePage,
-        props: { title: 'Logística' },
-        meta: { title: 'Logística' }
+        path: 'fornecedores',
+        name: 'fornecedores',
+        component: PartnerPage,
+        props: { type: 'suppliers' },
+        meta: { title: 'Fornecedores' }
       },
+       {
+        path: 'rh',
+        name: 'rh',
+        component: HRPage,
+        meta: { title: 'Recursos Humanos' }
+       },
+      
       {
         path: 'movimentacoes',
         name: 'movimentacoes',
@@ -59,38 +76,9 @@ const routes = [
         meta: { title: 'Produtos' }
       },
       {
-        path: 'producao',
-        name: 'producao',
-        component: ModulePage,
-        props: { title: 'Produção' },
-        meta: { title: 'Produção' }
-      },
-      {
-        path: 'qualidade',
-        name: 'qualidade',
-        component: ModulePage,
-        props: { title: 'Qualidade' },
-        meta: { title: 'Qualidade' }
-      },
-      {
-        path: 'rh',
-        name: 'rh',
-        component: ModulePage,
-        props: { title: 'RH' },
-        meta: { title: 'RH' }
-      },
-      {
-        path: 'ti',
-        name: 'ti',
-        component: ModulePage,
-        props: { title: 'TI' },
-        meta: { title: 'TI' }
-      },
-      {
         path: 'vendas',
         name: 'vendas',
-        component: ModulePage,
-        props: { title: 'Vendas' },
+        component: SalesPage,
         meta: { title: 'Vendas' }
       }
     ]
